@@ -1,7 +1,7 @@
 {
-  "name": "card-editor-dashboard",
+  "name": "bootstrap-card-editor",
   "version": "1.0.0",
-  "description": "Card Editor for dashboard",
+  "description": "Bootstrap card Editor for dashboard or other usage",
   "main": "index.html",
   "scripts": {
     "build": "webpack"
