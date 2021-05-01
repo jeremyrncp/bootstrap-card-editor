@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-card-editor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bootstrap card Editor for dashboard or other usage",
   "main": "index.html",
   "scripts": {
