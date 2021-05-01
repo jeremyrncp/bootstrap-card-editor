@@ -30,11 +30,7 @@ export class DynamicFetcher {
    */
   renderEditor(elm) {
     elm.innerHTML =
-      '<input type="text" id="card-editor-flux" class="form-control" placeholder="http ..." />' +
-      '<div class="row mt-3">' +
-      '<div class="col-7"><div id="card-editor-flux-select"></div><div class="form-inline mt-3" id="card-editor-flux-select-more"></div></div>' +
-      '<div class="col-5" id="card-editor-flux-result"></div>' +
-      "</div>";
+      `<input type="text" id="card-editor-flux" class="form-control" placeholder="http ..." /><div class="row mt-3"><div class="col-7"><div id="card-editor-flux-select"></div><div class="form-inline mt-3" id="card-editor-flux-select-more"></div></div><div class="col-5" id="card-editor-flux-result"></div></div>`;
 
     document
       .querySelector("#card-editor-flux")
@@ -96,30 +92,12 @@ export class DynamicFetcher {
       .querySelector("#card-editor-flux-select-name")
       .addEventListener("change", (event) => {
         if (typeof this.data[event.target.value] === "object") {
-          let options = "";
-          const first = this.data[event.target.value].shift();
-          Object.getOwnPropertyNames(first).map((value) => {
-            if (typeof first[value] !== "object") {
-              options += "<option value='" + value + "'>" + value + "</option>";
-            }
-          });
-          document.querySelector("#card-editor-flux-select-more").innerHTML =
-            '<select class="form-control dynamic-fetcher-select-type">' +
-            "<option>Select type</option>" +
-            "<option value='first'>FIRST VALUE OF</option>" +
-            "<option value='last'>LAST VALUE OF</option>" +
-            "<option value='sum'>SUM OF</option>" +
-            "<option value='avg'>AVERAGE OF</option>" +
-            "</select>" +
-            '<select class="form-control dynamic-fetcher-select-name" data-parent="' +
-            event.target.value +
-            '"><option>Select data</option>' +
-            options +
-            "</select>" +
-            '<input type="number" value="' +
-            this.refresh +
-            '" class="mt-3 form-control dynamic-fetcher-refresh" placeholder="Refresh every" />';
-
+          if (Array.isArray(this.data[event.target.value])) {
+            this.handleArrayWithObject(event);
+          } else {
+            /**@handle object */
+            this.handleObject(event);
+          }
           this.handleOtherElements();
         } else {
           this.choice = {
@@ -130,6 +108,29 @@ export class DynamicFetcher {
           this.run();
         }
       });
+  }
+
+  handleObject(event) {
+    let options = "";
+    Object.getOwnPropertyNames(this.data[event.target.value]).map((value) => {
+      if (typeof this.data[event.target.value][value] !== "object") {
+        options += "<option value='" + value + "'>" + value + "</option>";
+      }
+    });
+    document.querySelector("#card-editor-flux-select-more").innerHTML =
+      `<select class="form-control dynamic-fetcher-select-type"><option>Select type</option><option value='value'>VALUE OF</option></select><select class="form-control dynamic-fetcher-select-name" data-parent="${event.target.value}"><option>Select data</option>${options}</select><input type="number" value="${this.refresh}" class="mt-3 form-control dynamic-fetcher-refresh" placeholder="Refresh every" />`;
+  }
+
+  handleArrayWithObject(event) {
+    let options = "";
+    const first = this.data[event.target.value].shift();
+    Object.getOwnPropertyNames(first).map((value) => {
+      if (typeof first[value] !== "object") {
+        options += "<option value='" + value + "'>" + value + "</option>";
+      }
+    });
+    document.querySelector("#card-editor-flux-select-more").innerHTML =
+      `<select class="form-control dynamic-fetcher-select-type"><option>Select type</option><option value='first'>FIRST VALUE OF</option><option value='last'>LAST VALUE OF</option><option value='sum'>SUM OF</option><option value='avg'>AVERAGE OF</option></select><select class="form-control dynamic-fetcher-select-name" data-parent="${event.target.value}"><option>Select data</option>${options}</select><input type="number" value="${this.refresh}" class="mt-3 form-control dynamic-fetcher-refresh" placeholder="Refresh every" />`;
   }
 
   run() {
@@ -200,8 +201,10 @@ export class DynamicFetcher {
 
   result(conf, elm, data) {
     let value = 0;
-    if (conf.choice.type === "value") {
+    if (conf.choice.type === "value" && conf.choice.parent === null) {
       value = data[conf.choice.data];
+    } else if (conf.choice.type === "value") {
+      value = data[conf.choice.parent][conf.choice.data];
     } else if (conf.choice.type === "last") {
       value = data[conf.choice.parent].pop()[conf.choice.data];
     } else if (conf.choice.type === "first") {
