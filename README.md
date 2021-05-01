@@ -230,4 +230,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Jérémy Gaultier - contact@gaultierweb.com
 
-Project Link: [https://github.com/jeremyrncp/bootstrap-card-editor](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/jeremyrncp/bootstrap-card-editor](https://github.com/jeremyrncp/bootstrap-card-edito)

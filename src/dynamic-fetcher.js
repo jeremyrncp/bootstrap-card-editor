@@ -201,7 +201,7 @@ export class DynamicFetcher {
 
   result(conf, elm, data) {
     let value = 0;
-    if (conf.choice.type === "value" && conf.choice.parent === null) {
+    if (conf.choice.type === "value" && conf.choice.parent === undefined) {
       value = data[conf.choice.data];
     } else if (conf.choice.type === "value") {
       value = data[conf.choice.parent][conf.choice.data];
